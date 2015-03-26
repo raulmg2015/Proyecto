@@ -252,7 +252,8 @@ public class IngresaMercadoLibre extends javax.swing.JFrame {
          if(opc==0){
             this.dispose();
          }
-         Principal.regresa();
+         Principal.mostrarnew();
+        // Principal.regresa();
     }//GEN-LAST:event_CerrarSesionComprarActionPerformed
 
     private void SalirComprarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirComprarActionPerformed
@@ -306,9 +307,7 @@ public class IngresaMercadoLibre extends javax.swing.JFrame {
         BuscarArticulo objeto08 = null;
      try {
          objeto08 = new BuscarArticulo();
-     } catch (SQLException ex) {
-         Logger.getLogger(IngresaMercadoLibre.class.getName()).log(Level.SEVERE, null, ex);
-     } catch (IOException ex) {
+     } catch (SQLException | IOException ex) {
          Logger.getLogger(IngresaMercadoLibre.class.getName()).log(Level.SEVERE, null, ex);
      }
         objeto08.setVisible(true);
@@ -346,7 +345,7 @@ public class IngresaMercadoLibre extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new IngresaMercadoLibre().setVisible(true);
+                //new IngresaMercadoLibre().setVisible(true);
             }
         });
     }

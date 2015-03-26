@@ -211,7 +211,7 @@ public class PaginaPrincipal extends javax.swing.JFrame {
             else {
                 JOptionPane.showMessageDialog(null, "Contraseña No Valida",null,WIDTH,icono);
                 jPasswordField1.setText("");
-                Principal.regresa();
+                //Principal.regresa();
             }
             
              

@@ -6,6 +6,7 @@
 package tiendavirtual;
 
 import java.awt.Color;
+import java.awt.Image;
 import static java.awt.image.ImageObserver.WIDTH;
 import java.net.URL;
 import java.sql.Connection;
@@ -53,9 +54,8 @@ public class ListaDeProductos extends javax.swing.JFrame {
             Class.forName("com.mysql.jdbc.Driver");
             conexion = DriverManager.getConnection ("jdbc:mysql://localhost:3306/virtualtienda?zeroDateTimeBehavior=convertToNull","root", "");
             Statement s = conexion.createStatement();
-            rs = s.executeQuery ("SELECT p.Nombre_producto, c.Nombre_categoria, c.idCategoria, p.Descripcion, p.idProducto  FROM producto p, usuario u, categoria c WHERE p.idUsuario = u.idUsuario and c.idCategoria = p.idCategoria and p.idUsuario ="+oDatosUsuario.getIdUsuario());
-            //ResultSet rst = s.executeQuery("");
-            
+            rs = s.executeQuery ("SELECT p.Nombre_producto, c.Nombre_categoria, c.idCategoria, p.Descripcion, p.idProducto, p.Nom_imagen  FROM producto p, usuario u, categoria c WHERE p.idUsuario = u.idUsuario and c.idCategoria = p.idCategoria and p.idUsuario ="+oDatosUsuario.getIdUsuario());
+            //ResultSet rst = s.executeQuery("");        
             int fin;
             rs.last();
             fin = rs.getRow();
@@ -63,7 +63,11 @@ public class ListaDeProductos extends javax.swing.JFrame {
                 rs.first();
                 jTextNombreProducto.setText(rs.getString(1));
                 jTextCategoria.setText(rs.getString(2));
-                jTextDescripcion.setText(rs.getString(4));                
+                jTextDescripcion.setText(rs.getString(4));  
+               Image foto= getToolkit().getImage(rs.getString(6));
+              foto= foto.getScaledInstance(110, 110, Image.SCALE_DEFAULT);
+              imagen.setIcon(new ImageIcon(foto));
+               
             } 
                 //System.out.println (rs.getInt (1) + " " + rs.getString (2)+ " ");     
             
@@ -96,6 +100,7 @@ public class ListaDeProductos extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextDescripcion = new javax.swing.JTextArea();
         Beliminar = new javax.swing.JButton();
+        imagen = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Lista de mis Articulos");
@@ -165,12 +170,17 @@ public class ListaDeProductos extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Nombre)
-                    .addComponent(Categoria)
-                    .addComponent(Descripcion)
-                    .addComponent(Usuario))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Nombre)
+                            .addComponent(Categoria)
+                            .addComponent(Descripcion)
+                            .addComponent(Usuario)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(imagen, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
@@ -212,16 +222,21 @@ public class ListaDeProductos extends javax.swing.JFrame {
                     .addComponent(jTextCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Descripcion)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Siguiente)
-                    .addComponent(Anteriror))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Regresar)
-                    .addComponent(Beliminar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(Siguiente)
+                            .addComponent(Anteriror))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(Regresar)
+                            .addComponent(Beliminar)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(Descripcion)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(imagen, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -235,6 +250,9 @@ public class ListaDeProductos extends javax.swing.JFrame {
                 jTextNombreProducto.setText(rs.getString(1));
                 jTextCategoria.setText(rs.getString(2));
                 jTextDescripcion.setText(rs.getString(4)); 
+                Image foto= getToolkit().getImage(rs.getString(6));
+              foto= foto.getScaledInstance(110, 110, Image.SCALE_DEFAULT);
+              imagen.setIcon(new ImageIcon(foto));
             }
             else
                 rs.last();
@@ -256,6 +274,9 @@ public class ListaDeProductos extends javax.swing.JFrame {
                 jTextNombreProducto.setText(rs.getString(1));
                 jTextCategoria.setText(rs.getString(2));
                 jTextDescripcion.setText(rs.getString(4)); 
+                 Image foto= getToolkit().getImage(rs.getString(6));
+              foto= foto.getScaledInstance(110, 110, Image.SCALE_DEFAULT);
+              imagen.setIcon(new ImageIcon(foto));
             }
             else
                 rs.first();
@@ -349,6 +370,7 @@ public class ListaDeProductos extends javax.swing.JFrame {
     private javax.swing.JButton Regresar;
     private javax.swing.JButton Siguiente;
     private javax.swing.JLabel Usuario;
+    private javax.swing.JLabel imagen;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextCategoria;

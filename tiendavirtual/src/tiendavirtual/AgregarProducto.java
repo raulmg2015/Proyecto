@@ -52,7 +52,7 @@ public class AgregarProducto extends javax.swing.JFrame {
             Statement s = conexion.createStatement();
             ResultSet rs = s.executeQuery ("select * from categoria");
             //int fin;
-            rs.last();
+            //rs.last();
             //fin = rs.getRow();
             rs.first();
             jComboBox1.addItem(rs.getString(2));
@@ -262,7 +262,7 @@ public class AgregarProducto extends javax.swing.JFrame {
                Connection conexion = DriverManager.getConnection ("jdbc:mysql://localhost:3306/virtualtienda?zeroDateTimeBehavior=convertToNull","root", "");
                Statement s = conexion.createStatement();
                              
-                   s.execute("INSERT INTO producto(idProducto,idUsuario,idCategoria,Nombre_producto,Descripcion,Nombre_imagen,Imagen)"
+                   s.execute("INSERT INTO producto(idProducto,idUsuario,idCategoria,Nombre_producto,Descripcion,Nom_imagen,Imagen)"
                            + "VALUES(NULL,"+oDatosUsuario.getIdUsuario()+","+idEntindad+",'"+jTextField1.getText()+"','"+jTextArea1.getText()+"','"+txtimagen.getText()+"','"+archivofoto
                            +"')");
                    JOptionPane.showMessageDialog(this, "Datos ingresados correctamente",null,WIDTH,icono);

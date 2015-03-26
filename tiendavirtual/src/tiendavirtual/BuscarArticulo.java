@@ -6,7 +6,9 @@
 package tiendavirtual;
 
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -14,11 +16,17 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
+
 
 /**
  *
@@ -30,6 +38,15 @@ public class BuscarArticulo extends javax.swing.JFrame {
      * Creates new form BuscarArticulo
      */
     Connection conexion;
+     public Class getColumnClass(int indiceColumna){
+        Object stefany=getValueAt(0, indiceColumna);
+        if(stefany == null){
+            return Object.class;
+        }else{
+        return stefany.getClass();
+        }
+       }
+    
         
     public BuscarArticulo() throws SQLException, IOException {
         initComponents();
@@ -41,8 +58,9 @@ public class BuscarArticulo extends javax.swing.JFrame {
       
             
     }
-        void mostrardatos(String valor) throws SQLException{
+        void mostrardatos(String valor) throws SQLException, IOException{
             DefaultTableModel modelo= new DefaultTableModel();
+            
             modelo.addColumn("ID OFERTA");
             modelo.addColumn("PRODUCTO");
             modelo.addColumn("VENDEDOR");
@@ -50,20 +68,18 @@ public class BuscarArticulo extends javax.swing.JFrame {
             modelo.addColumn("PRECIO");
             modelo.addColumn("CANTIDAD");
             modelo.addColumn("DESCRIPCION");
-            modelo.addColumn("IMAGEN");
+            //modelo.addColumn("IMAGEN");
             tablaofertas.setModel(modelo);   
+            
             if(valor.equals("")){
                 
             }           
             conexion = DriverManager.getConnection ("jdbc:mysql://localhost:3306/virtualtienda?zeroDateTimeBehavior=convertToNull","root", "");
             Statement s = conexion.createStatement();
              String sql;
-            sql = ("SELECT o.idOfertas, p.Nombre_producto, u.Nombre, c.Nombre_categoria, o.Precio, o.cantidad, p.Descripcion FROM producto p, usuario u, categoria c, ofertas o WHERE p.idUsuario = u.idUsuario and c.idCategoria = p.idCategoria and o.idProducto = p.idProducto and o.Usuario_vende = u.idUsuario and p.Nombre_Producto = '"+ valor+"'");
-            String []datos = new String [7];
-            ResultSet rs = s.executeQuery(sql);
-            /*InputStream is = rs.getBinaryStream(8);
-             BufferedImage bi = ImageIO.read(is);
-              ImageIcon ii =new ImageIcon(bi);*/
+            sql = ("SELECT o.idOfertas, p.Nombre_producto, u.Nombre, c.Nombre_categoria, o.Precio, o.cantidad, p.Descripcion, p.Nom_imagen FROM producto p, usuario u, categoria c, ofertas o WHERE p.idUsuario = u.idUsuario and c.idCategoria = p.idCategoria and o.idProducto = p.idProducto and o.Usuario_vende = u.idUsuario and p.Nombre_Producto = '"+ valor+"'");
+            Object []datos = new Object [8];
+            ResultSet rs = s.executeQuery(sql);           
             while(rs.next()){
                 datos[0]=rs.getString(1);                
                 datos[1]=rs.getString(2);
@@ -72,13 +88,18 @@ public class BuscarArticulo extends javax.swing.JFrame {
                 datos[4]=rs.getString(5);
                 datos[5]=rs.getString(6);
                 datos[6]=rs.getString(7);
-                //datos[7]= (ii);
+                Image foto= getToolkit().getImage(rs.getString(8));
+                foto= foto.getScaledInstance(110, 110, Image.SCALE_DEFAULT);
+                imageen.setIcon(new ImageIcon(foto));
+        
                 modelo.addRow(datos);
                 tablaofertas.setModel(modelo);
             }
            
             
         }
+        
+        
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -96,6 +117,7 @@ public class BuscarArticulo extends javax.swing.JFrame {
         bregresar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaofertas = new javax.swing.JTable();
+        imageen = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -166,26 +188,33 @@ public class BuscarArticulo extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(119, 119, 119)
                         .addComponent(bregresar, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(207, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addComponent(imageen, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(62, 62, 62))
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jScrollPane1)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bbuscar))
-                .addGap(31, 31, 31)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bregresar)
-                    .addComponent(jButton2))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(txtbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(bbuscar))
+                        .addGap(31, 31, 31)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(bregresar)
+                            .addComponent(jButton2))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(imageen, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18))
         );
 
         pack();
@@ -196,6 +225,8 @@ public class BuscarArticulo extends javax.swing.JFrame {
             // TODO add your handling code here:
             mostrardatos(txtbuscar.getText());
         } catch (SQLException ex) {
+            Logger.getLogger(BuscarArticulo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(BuscarArticulo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_bbuscarActionPerformed
@@ -214,7 +245,10 @@ public class BuscarArticulo extends javax.swing.JFrame {
         try {
             // TODO add your handling code here:
             mostrardatos("");
+            imageen.setIcon(null);
         } catch (SQLException ex) {
+            Logger.getLogger(BuscarArticulo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(BuscarArticulo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -263,10 +297,15 @@ public class BuscarArticulo extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bbuscar;
     private javax.swing.JButton bregresar;
+    private javax.swing.JLabel imageen;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tablaofertas;
     private javax.swing.JTextField txtbuscar;
     // End of variables declaration//GEN-END:variables
+
+    private Object getValueAt(int i, int indiceColumna) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
